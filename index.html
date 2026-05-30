@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Genesis: Hatchery Network</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <h1>Project Genesis: Hatchery Network</h1>
+        <p class="subtitle">Node-7 Genetic Custodian Interface</p>
+      </div>
+      <div class="resource-bar">
+        <span>DNA <b id="dnaCount">0</b></span>
+        <span>Food <b id="foodCount">0</b></span>
+        <span>Data <b id="dataCount">0</b></span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel facility-panel">
+        <h2>Facility Log</h2>
+        <div id="logBox" class="log-box"></div>
+
+        <div class="facility-grid">
+          <button id="tickButton">Run Facility Cycle</button>
+          <button id="saveButton">Save</button>
+          <button id="resetButton" class="danger">Reset Save</button>
+        </div>
+
+        <div class="stat-card">
+          <h3>Node Status</h3>
+          <p>Habitat Level: <b id="habitatLevel">1</b></p>
+          <p>Population: <b id="populationCount">0</b>/<b id="populationCap">6</b></p>
+          <p>Archive: <b id="archiveCount">0</b> discoveries</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Research</h3>
+          <p>Mutation Science: <b id="mutationLevel">1</b></p>
+          <p>Incubation: <b id="incubationLevel">1</b></p>
+          <p>Habitat Engineering: <b id="habitatResearchLevel">1</b></p>
+          <button id="upgradeMutation">Upgrade Mutation Science</button>
+          <button id="upgradeIncubation">Upgrade Incubation</button>
+          <button id="upgradeHabitat">Upgrade Habitat</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <h2>Living Specimens</h2>
+          <button id="breedButton">Breed Selected Pair</button>
+        </div>
+        <p class="hint">Select two compatible adult specimens. Offspring inherit visible traits with a chance of mutation.</p>
+        <div id="creatureList" class="card-grid"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Incubation Bay</h2>
+        <div id="eggList" class="card-grid"></div>
+
+        <h2>Archive</h2>
+        <p class="hint">First discovery of each species, pattern, color, and anomaly is recorded.</p>
+        <div id="archiveList" class="archive-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="creatureCardTemplate">
+    <article class="creature-card">
+      <div class="creature-art"></div>
+      <div class="creature-info"></div>
+    </article>
+  </template>
+
+  <script src="game.js"></script>
+</body>
+</html>
