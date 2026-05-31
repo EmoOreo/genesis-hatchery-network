@@ -5,6 +5,77 @@
 
 const SAVE_KEY = "project_genesis_hatchery_node7_v1";
 
+const FX_ASSETS = {
+  hatch: "assets/duelyst/fx/fx_bigfirehitspark.png",
+  mutation: "assets/duelyst/fx/fx_beamtesla.png",
+  anomaly: "assets/duelyst/fx/f6_flashfreeze.png",
+  research: "assets/duelyst/icons/bossspell_ancientknowledge.png",
+  transfer: "assets/particles/smoke_09.png",
+  creature: "assets/duelyst/fx/fx_animalslash.png"
+};
+
+const DUELYST_CREATURES = [
+  "boss_crystal_breathing.gif",
+  "boss_invader_breathing.gif",
+  "boss_legion_breathing.gif",
+  "boss_grym_breathing.gif",
+  "boss_borealjuggernaut_breathing.gif",
+  "boss_serpenti_breathing.gif",
+  "boss_shadowlord_breathing.gif",
+  "boss_wraith_breathing.gif",
+  "boss_vampire_breathing.gif",
+  "boss_umbra_breathing.gif",
+  "boss_skyfalltyrant_breathing.gif",
+  "neutral_saberspinemk2_breathing.gif"
+];
+
+const GENESIS_SPECIES_GIFS = {
+  "Dune Raptor": "boss_serpenti_breathing.gif",
+  "Forest Grazer": "boss_harmony_breathing.gif",
+  "Marsh Stalker": "boss_sandpanther_breathing.gif",
+  "Saberfang": "neutral_saberspinemk2_breathing.gif",
+  "Direwolf": "boss_grym_breathing.gif",
+  "Thunderhorn": "boss_borealjuggernaut_breathing.gif",
+  "Frost Mammoth": "boss_borealjuggernaut_breathing.gif",
+  "Ember Drake": "boss_skyfalltyrant_breathing.gif",
+  "Void Panther": "boss_shadowlord_breathing.gif"
+};
+
+const GENESIS_ICON_ASSETS = {
+  egg: "assets/duelyst/icons/generalspell_f5_egg.png",
+  mutation: "assets/duelyst/icons/artifact_f2_unboundedenergyamulet.png",
+  research: "assets/duelyst/icons/bossspell_ancientknowledge.png",
+  resilience: "assets/duelyst/icons/artifact_f5_irridiumscale.png",
+  vitality: "assets/duelyst/icons/artifact_f5_eternalheart.png",
+  predator: "assets/duelyst/icons/artifact_f5_twinfang.png",
+  frost: "assets/duelyst/icons/artifact_f6_frostbiter.png",
+  containment: "assets/duelyst/icons/icon_f1_aegisbarrier.png"
+};
+
+function getCreatureVisual(c) {
+  const base = GENESIS_SPECIES_GIFS[c.species] || DUELYST_CREATURES[Math.abs(hashString(c.species || c.name)) % DUELYST_CREATURES.length];
+  let file = base;
+  if (c.anomaly) {
+    const anomalyMap = {
+      "Crystalback": "boss_crystal_breathing.gif",
+      "Hollowmane": "boss_wraith_breathing.gif",
+      "Thunderblood": "boss_invader_breathing.gif",
+      "Eclipseborn": "boss_shadowlord_breathing.gif",
+      "Primal Reversion": "boss_legion_breathing.gif"
+    };
+    file = anomalyMap[c.anomaly] || file;
+  } else if (c.mutation === "Giant") {
+    file = "boss_legion_breathing.gif";
+  } else if (c.mutation === "Melanistic") {
+    file = "boss_umbra_breathing.gif";
+  }
+  return `assets/duelyst/creatures/${file}`;
+}
+
+function hashString(value) {
+  return String(value).split("").reduce((acc, ch) => ((acc << 5) - acc + ch.charCodeAt(0)) | 0, 0);
+}
+
 const speciesCatalog = {
   "Dune Raptor": { icon: "△", color: "#d8a45f", class: "Saurian", tier: 1 },
   "Forest Grazer": { icon: "◒", color: "#78c679", class: "Grazer", tier: 1 },
@@ -76,7 +147,8 @@ function makeCreature(species, overrides = {}) {
     color: overrides.color || randomFrom(colors.slice(0, 4)),
     temperament: overrides.temperament || randomFrom(temperaments),
     mutation: overrides.mutation || null,
-    anomaly: overrides.anomaly || null
+    anomaly: overrides.anomaly || null,
+    portrait: overrides.portrait || null
   };
 }
 
@@ -162,8 +234,9 @@ function runCycle() {
       state.creatures.push(egg.child);
       updateArchiveForCreature(egg.child);
       addLog(`${egg.child.name} hatched: ${egg.child.species}, ${egg.child.color}, ${egg.child.pattern}.`);
-      if (egg.child.mutation) addLog(`Rare mutation expressed: ${egg.child.mutation}.`);
-      if (egg.child.anomaly) addLog(`GENESIS ANOMALY detected: ${egg.child.anomaly}.`);
+      triggerFX("hatch", `${egg.child.name} hatched`);
+      if (egg.child.mutation) { addLog(`Rare mutation expressed: ${egg.child.mutation}.`); triggerFX("mutation", `Rare mutation: ${egg.child.mutation}`); }
+      if (egg.child.anomaly) { addLog(`GENESIS ANOMALY detected: ${egg.child.anomaly}.`); triggerFX("anomaly", `GENESIS ANOMALY: ${egg.child.anomaly}`); }
     }
   }
 
@@ -233,6 +306,7 @@ function breedSelected() {
   state.eggs.push(egg);
   state.selected = [];
   addLog(`Incubation started: ${a.name} × ${b.name}.`);
+  triggerFX("hatch", "Incubation started");
   render();
 }
 
@@ -314,6 +388,7 @@ function releaseCreature(creatureId) {
   const reward = 15 + c.generation * 2;
   state.dna += reward;
   addLog(`${c.name} transferred to preserve network. +${reward} DNA.`);
+  triggerFX("transfer", `${c.name} transferred`);
   render();
 }
 
@@ -332,7 +407,29 @@ function upgrade(type) {
   state.research[type] += 1;
   if (type === "habitat") state.habitatLevel += 1;
   addLog(`${type[0].toUpperCase() + type.slice(1)} research upgraded.`);
+  triggerFX("research", "Research upgraded");
   render();
+}
+
+
+function triggerFX(type = "hatch", message = "") {
+  const layer = document.getElementById("fxLayer");
+  if (!layer) return;
+  const burst = document.createElement("div");
+  burst.className = "fx-burst";
+  burst.style.setProperty("--fx-img", `url("${FX_ASSETS[type] || FX_ASSETS.hatch}")`);
+  burst.style.setProperty("--fx-x", `${40 + Math.random() * 20}%`);
+  burst.style.setProperty("--fx-y", `${18 + Math.random() * 18}%`);
+  layer.appendChild(burst);
+  setTimeout(() => burst.remove(), 950);
+
+  if (message) {
+    const toast = document.createElement("div");
+    toast.className = "fx-toast";
+    toast.textContent = message;
+    layer.appendChild(toast);
+    setTimeout(() => toast.remove(), 1450);
+  }
 }
 
 function render() {
@@ -379,9 +476,16 @@ function renderCreatures() {
     };
 
     const art = document.createElement("div");
-    art.className = "creature-art";
+    art.className = "creature-art creature-art-animated";
     art.style.setProperty("--creatureColor", colorMap[c.color] || data.color);
     art.style.setProperty("--creatureIcon", `"${data.icon}"`);
+
+    const img = document.createElement("img");
+    img.className = "creature-gif";
+    img.src = c.portrait || getCreatureVisual(c);
+    img.alt = `${c.species} animated specimen`;
+    img.loading = "lazy";
+    art.appendChild(img);
 
     const info = document.createElement("div");
     info.className = "creature-info";
@@ -396,6 +500,12 @@ function renderCreatures() {
       <span class="badge">${c.temperament}</span>
       ${c.mutation ? `<span class="badge rare">${c.mutation}</span>` : ""}
       ${c.anomaly ? `<span class="badge rare">${c.anomaly}</span>` : ""}
+      <div class="mini-icon-row">
+        <img src="${GENESIS_ICON_ASSETS.resilience}" alt="Resilience trait" title="Resilience trait" />
+        <img src="${GENESIS_ICON_ASSETS.predator}" alt="Predator trait" title="Predator trait" />
+        ${c.mutation ? `<img src="${GENESIS_ICON_ASSETS.mutation}" alt="Mutation marker" title="Mutation marker" />` : ""}
+        ${c.anomaly ? `<img src="${GENESIS_ICON_ASSETS.frost}" alt="Anomaly marker" title="Anomaly marker" />` : ""}
+      </div>
       <button class="small-button" onclick="event.stopPropagation(); releaseCreature('${c.id}')">Transfer</button>
     `;
 
@@ -416,10 +526,12 @@ function renderEggs() {
   state.eggs.forEach(e => {
     const div = document.createElement("article");
     div.className = "egg-card";
+    const pct = Math.max(0, Math.min(100, Math.round((e.progress / e.required) * 100)));
     div.innerHTML = `
       <h3>Viable Egg</h3>
       <p class="muted">${e.parentA} × ${e.parentB}</p>
       <p>Progress: <b>${e.progress}</b>/<b>${e.required}</b></p>
+      <div class="progress-shell"><div class="progress-fill" style="--progress:${pct}%"></div></div>
       <p>Projected Line: ${e.child.species}</p>
     `;
     list.appendChild(div);

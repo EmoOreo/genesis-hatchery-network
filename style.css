@@ -219,3 +219,191 @@ h2 { color: var(--accent); }
   .topbar { align-items: flex-start; flex-direction: column; }
   .resource-bar { justify-content: flex-start; }
 }
+
+
+/* Tier 1 Asset Integration: Kenney particles + Glitch utility icons */
+#fxLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  overflow: hidden;
+}
+.fx-burst {
+  position: absolute;
+  width: 132px;
+  height: 132px;
+  left: var(--fx-x, 50%);
+  top: var(--fx-y, 22%);
+  transform: translate(-50%, -50%) scale(0.25);
+  background-image: var(--fx-img);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: burst-pop 900ms ease-out forwards;
+  filter: drop-shadow(0 0 18px rgba(120,240,192,0.65));
+}
+.fx-toast {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  transform: translateX(-50%);
+  max-width: min(92vw, 520px);
+  padding: 0.8rem 1rem;
+  border-radius: 18px;
+  background: rgba(9, 13, 22, 0.92);
+  border: 1px solid rgba(120, 240, 192, 0.4);
+  color: var(--text);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  animation: toast-rise 1400ms ease-out forwards;
+  text-align: center;
+  font-weight: 800;
+}
+@keyframes burst-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2) rotate(0deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.65) rotate(28deg); }
+}
+@keyframes toast-rise {
+  0% { opacity: 0; transform: translate(-50%, 16px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  78% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -18px); }
+}
+.resource-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.resource-bar img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+.panel {
+  position: relative;
+}
+.panel::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  width: 26px;
+  height: 26px;
+  background: url("assets/icons/archive_check.png") center / contain no-repeat;
+  opacity: 0.18;
+  pointer-events: none;
+}
+button {
+  position: relative;
+  overflow: hidden;
+}
+button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: translateX(-120%);
+  transition: transform 420ms ease;
+}
+button:hover::after { transform: translateX(120%); }
+.creature-card.selected {
+  outline: 3px solid var(--accent);
+  box-shadow: 0 0 0 6px rgba(120,240,192,0.12), 0 18px 44px rgba(0,0,0,0.28);
+}
+.progress-shell {
+  height: 18px;
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin: 0.4rem 0 0.7rem;
+}
+.progress-fill {
+  height: 100%;
+  width: var(--progress, 0%);
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: inherit;
+  transition: width 300ms ease;
+}
+.egg-card h3::before, .stat-card h3::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 0.4rem;
+  vertical-align: -4px;
+  background: url("assets/icons/slot_filled.png") center / contain no-repeat;
+}
+.badge.rare {
+  animation: rare-pulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes rare-pulse {
+  from { filter: drop-shadow(0 0 0 rgba(255,209,102,0)); }
+  to { filter: drop-shadow(0 0 8px rgba(255,209,102,0.5)); }
+}
+
+
+/* Duelyst/Genesis integrated asset pass */
+.creature-art-animated {
+  min-height: 118px;
+  height: 118px;
+  overflow: hidden;
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255,255,255,0.28), transparent 2.8rem),
+    radial-gradient(circle at 50% 95%, rgba(0,0,0,0.36), transparent 4.2rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--creatureColor, #7db9ff) 70%, #ffffff 10%), rgba(255,255,255,0.08));
+}
+
+.creature-art-animated::before {
+  content: "";
+}
+
+.creature-gif {
+  max-width: 112px;
+  max-height: 112px;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 12px 10px rgba(0,0,0,0.45));
+  transform: translateY(4px) scale(1.12);
+}
+
+.mini-icon-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin-top: 0.45rem;
+}
+
+.mini-icon-row img,
+.inline-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.35));
+}
+
+.inline-icon {
+  vertical-align: middle;
+  margin-right: 0.3rem;
+}
+
+.egg-preview {
+  display: block;
+  max-width: 96px;
+  max-height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  margin: 0.55rem auto 0;
+  filter: drop-shadow(0 10px 8px rgba(0,0,0,0.42));
+  opacity: 0.82;
+}
+
+.fx-burst {
+  image-rendering: pixelated;
+}

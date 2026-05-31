@@ -71,3 +71,8 @@ This is an MVP/prototype. It is designed to be expanded with:
 - Sound effects
 - Story logs
 - Better balancing
+
+
+## Duelyst Asset Integration
+
+This version includes a curated OpenDuelyst-derived asset pass: animated creature GIFs, selected icons, and selected FX assets for hatching, mutation, anomaly, and archive presentation. See `DUELYST_INTEGRATION.md`.
