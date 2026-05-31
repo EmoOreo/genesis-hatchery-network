@@ -5,6 +5,14 @@
 
 const SAVE_KEY = "project_genesis_hatchery_node7_v1";
 
+const FX_ASSETS = {
+  hatch: "assets/particles/magic_03.png",
+  mutation: "assets/particles/star_09.png",
+  anomaly: "assets/particles/spark_02.png",
+  research: "assets/particles/light_03.png",
+  transfer: "assets/particles/smoke_09.png"
+};
+
 const speciesCatalog = {
   "Dune Raptor": { icon: "△", color: "#d8a45f", class: "Saurian", tier: 1 },
   "Forest Grazer": { icon: "◒", color: "#78c679", class: "Grazer", tier: 1 },
@@ -162,8 +170,9 @@ function runCycle() {
       state.creatures.push(egg.child);
       updateArchiveForCreature(egg.child);
       addLog(`${egg.child.name} hatched: ${egg.child.species}, ${egg.child.color}, ${egg.child.pattern}.`);
-      if (egg.child.mutation) addLog(`Rare mutation expressed: ${egg.child.mutation}.`);
-      if (egg.child.anomaly) addLog(`GENESIS ANOMALY detected: ${egg.child.anomaly}.`);
+      triggerFX("hatch", `${egg.child.name} hatched`);
+      if (egg.child.mutation) { addLog(`Rare mutation expressed: ${egg.child.mutation}.`); triggerFX("mutation", `Rare mutation: ${egg.child.mutation}`); }
+      if (egg.child.anomaly) { addLog(`GENESIS ANOMALY detected: ${egg.child.anomaly}.`); triggerFX("anomaly", `GENESIS ANOMALY: ${egg.child.anomaly}`); }
     }
   }
 
@@ -233,6 +242,7 @@ function breedSelected() {
   state.eggs.push(egg);
   state.selected = [];
   addLog(`Incubation started: ${a.name} × ${b.name}.`);
+  triggerFX("hatch", "Incubation started");
   render();
 }
 
@@ -314,6 +324,7 @@ function releaseCreature(creatureId) {
   const reward = 15 + c.generation * 2;
   state.dna += reward;
   addLog(`${c.name} transferred to preserve network. +${reward} DNA.`);
+  triggerFX("transfer", `${c.name} transferred`);
   render();
 }
 
@@ -332,7 +343,29 @@ function upgrade(type) {
   state.research[type] += 1;
   if (type === "habitat") state.habitatLevel += 1;
   addLog(`${type[0].toUpperCase() + type.slice(1)} research upgraded.`);
+  triggerFX("research", "Research upgraded");
   render();
+}
+
+
+function triggerFX(type = "hatch", message = "") {
+  const layer = document.getElementById("fxLayer");
+  if (!layer) return;
+  const burst = document.createElement("div");
+  burst.className = "fx-burst";
+  burst.style.setProperty("--fx-img", `url("${FX_ASSETS[type] || FX_ASSETS.hatch}")`);
+  burst.style.setProperty("--fx-x", `${40 + Math.random() * 20}%`);
+  burst.style.setProperty("--fx-y", `${18 + Math.random() * 18}%`);
+  layer.appendChild(burst);
+  setTimeout(() => burst.remove(), 950);
+
+  if (message) {
+    const toast = document.createElement("div");
+    toast.className = "fx-toast";
+    toast.textContent = message;
+    layer.appendChild(toast);
+    setTimeout(() => toast.remove(), 1450);
+  }
 }
 
 function render() {
@@ -416,10 +449,12 @@ function renderEggs() {
   state.eggs.forEach(e => {
     const div = document.createElement("article");
     div.className = "egg-card";
+    const pct = Math.max(0, Math.min(100, Math.round((e.progress / e.required) * 100)));
     div.innerHTML = `
       <h3>Viable Egg</h3>
       <p class="muted">${e.parentA} × ${e.parentB}</p>
       <p>Progress: <b>${e.progress}</b>/<b>${e.required}</b></p>
+      <div class="progress-shell"><div class="progress-fill" style="--progress:${pct}%"></div></div>
       <p>Projected Line: ${e.child.species}</p>
     `;
     list.appendChild(div);
