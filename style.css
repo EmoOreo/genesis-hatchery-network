@@ -407,3 +407,182 @@ button:hover::after { transform: translateX(120%); }
 .fx-burst {
   image-rendering: pixelated;
 }
+
+
+/* Research clarity patch */
+button.cannot-afford,
+button:disabled.cannot-afford {
+  opacity: 0.62;
+  filter: grayscale(0.35);
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #4b5563, #64748b);
+  color: #e5e7eb;
+}
+
+button.cannot-afford::after {
+  content: "  ✕";
+  font-weight: 900;
+}
+
+
+/* Tier 1B — Visual Polish Pass */
+.topbar {
+  gap: 1.25rem;
+}
+
+.resource-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 42px;
+}
+
+.resource-bar img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.45));
+  flex: 0 0 auto;
+}
+
+.panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(120, 240, 192, 0.055), transparent 32%),
+    radial-gradient(circle at 95% 8%, rgba(141, 183, 255, 0.1), transparent 4.5rem);
+  opacity: 0.75;
+}
+
+.panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card-grid {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.creature-card {
+  min-height: 390px;
+  display: flex;
+  flex-direction: column;
+}
+
+.creature-card.selected {
+  outline: 3px solid var(--accent);
+  box-shadow:
+    0 0 0 1px rgba(120, 240, 192, 0.35),
+    0 0 28px rgba(120, 240, 192, 0.18),
+    0 14px 40px rgba(0,0,0,0.24);
+}
+
+.creature-art-animated {
+  height: 170px;
+  min-height: 170px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background:
+    radial-gradient(circle at 50% 62%, rgba(0,0,0,0.48), transparent 4.4rem),
+    radial-gradient(circle at 50% 46%, rgba(255,255,255,0.34), transparent 3.3rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--creatureColor, #7db9ff) 64%, #ffffff 14%), rgba(255,255,255,0.08));
+}
+
+.creature-gif {
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  transform: translateY(18px) scale(2.35);
+  transform-origin: center bottom;
+  image-rendering: pixelated;
+  filter:
+    drop-shadow(0 16px 12px rgba(0,0,0,0.58))
+    saturate(1.08)
+    contrast(1.04);
+}
+
+.creature-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.creature-info h3 {
+  font-size: 1.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.creature-info .small-button {
+  margin-top: auto;
+}
+
+.mini-icon-row {
+  min-height: 30px;
+}
+
+.mini-icon-row img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(120, 240, 192, 0.09);
+  border: 1px solid rgba(120, 240, 192, 0.17);
+  padding: 3px;
+}
+
+.egg-card {
+  border-color: rgba(120, 240, 192, 0.16);
+}
+
+.egg-preview {
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  transform: scale(1.85);
+  transform-origin: center bottom;
+  margin-top: 1.2rem;
+  margin-bottom: 1.7rem;
+}
+
+.archive-chip {
+  background: rgba(255,255,255,0.075);
+}
+
+.stat-card h3::before {
+  content: "▣ ";
+  color: var(--accent);
+}
+
+.facility-panel .stat-card h3::before {
+  content: "▣ ";
+}
+
+/* Hide accidental oversized decorative checkmark-style images if present in panel corners */
+.panel > img[src*="archive_check"],
+.panel > img[src*="check"] {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .creature-art-animated {
+    height: 150px;
+    min-height: 150px;
+  }
+
+  .creature-gif {
+    transform: translateY(16px) scale(2.05);
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}

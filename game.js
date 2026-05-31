@@ -162,6 +162,15 @@ function populationCap() {
   return 4 + state.habitatLevel * 2 + state.research.habitat * 2;
 }
 
+function researchCost(type) {
+  const costs = {
+    mutation: 40 + state.research.mutation * 35,
+    incubation: 35 + state.research.incubation * 30,
+    habitat: 50 + state.research.habitat * 40
+  };
+  return costs[type] ?? 9999;
+}
+
 function addLog(message) {
   state.log.unshift(`Cycle ${state.cycle}: ${message}`);
   state.log = state.log.slice(0, 24);
@@ -194,6 +203,10 @@ function load() {
   }
   state.creatures.forEach(updateArchiveForCreature);
   if (!state.log.length) addLog("Node-7 interface restored. Genetic Custodian recognized.");
+  if (!state.tier1bVisualPolishNoted) {
+    addLog("Tier 1B visual polish active: enlarged specimen cards, clearer research costs, and upgraded asset presentation.");
+    state.tier1bVisualPolishNoted = true;
+  }
   render();
 }
 
@@ -393,24 +406,24 @@ function releaseCreature(creatureId) {
 }
 
 function upgrade(type) {
-  const costs = {
-    mutation: 40 + state.research.mutation * 35,
-    incubation: 35 + state.research.incubation * 30,
-    habitat: 50 + state.research.habitat * 40
-  };
-  const cost = costs[type];
+  const cost = researchCost(type);
+  const label = type[0].toUpperCase() + type.slice(1);
+
   if (state.data < cost) {
-    addLog(`Insufficient research data. ${type} upgrade requires ${cost}.`);
+    const needed = cost - state.data;
+    addLog(`Insufficient research data. ${label} upgrade requires ${cost} Data. Need ${needed} more.`);
+    triggerFX("research", `Need ${needed} more Data`);
+    render();
     return;
   }
+
   state.data -= cost;
   state.research[type] += 1;
   if (type === "habitat") state.habitatLevel += 1;
-  addLog(`${type[0].toUpperCase() + type.slice(1)} research upgraded.`);
+  addLog(`${label} research upgraded for ${cost} Data.`);
   triggerFX("research", "Research upgraded");
   render();
 }
-
 
 function triggerFX(type = "hatch", message = "") {
   const layer = document.getElementById("fxLayer");
@@ -432,6 +445,29 @@ function triggerFX(type = "hatch", message = "") {
   }
 }
 
+function updateResearchButtons() {
+  const buttonConfig = [
+    { id: "upgradeMutation", type: "mutation", label: "Upgrade Mutation Science" },
+    { id: "upgradeIncubation", type: "incubation", label: "Upgrade Incubation" },
+    { id: "upgradeHabitat", type: "habitat", label: "Upgrade Habitat" }
+  ];
+
+  buttonConfig.forEach(config => {
+    const button = document.getElementById(config.id);
+    if (!button) return;
+
+    const cost = researchCost(config.type);
+    const canAfford = state.data >= cost;
+
+    button.textContent = `${config.label} — ${cost} Data`;
+    button.disabled = !canAfford;
+    button.title = canAfford
+      ? `Spend ${cost} Data`
+      : `Need ${cost - state.data} more Data`;
+    button.classList.toggle("cannot-afford", !canAfford);
+  });
+}
+
 function render() {
   document.getElementById("dnaCount").textContent = state.dna;
   document.getElementById("foodCount").textContent = state.food;
@@ -443,6 +479,7 @@ function render() {
   document.getElementById("mutationLevel").textContent = state.research.mutation;
   document.getElementById("incubationLevel").textContent = state.research.incubation;
   document.getElementById("habitatResearchLevel").textContent = state.research.habitat;
+  updateResearchButtons();
 
   renderLog();
   renderCreatures();
