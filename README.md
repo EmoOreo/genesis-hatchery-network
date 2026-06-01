@@ -76,3 +76,8 @@ This is an MVP/prototype. It is designed to be expanded with:
 ## Duelyst Asset Integration
 
 This version includes a curated OpenDuelyst-derived asset pass: animated creature GIFs, selected icons, and selected FX assets for hatching, mutation, anomaly, and archive presentation. See `DUELYST_INTEGRATION.md`.
+
+
+## Tier 1C + Tier 2A UX/Layout Patch
+
+This build includes broken-icon cleanup, grouped Archive display, improved incubation cards with projected creature previews, research benefit descriptions, and mobile section navigation. See `TIER_1C_2A_UX_LAYOUT.md`.

@@ -586,3 +586,435 @@ button.cannot-afford::after {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Tier 1C + Tier 2A — UX Repair and Layout Pass */
+:root {
+  --surface: #141b28;
+  --surface-2: #1d2637;
+  --surface-offset: #242f43;
+  --resource-dna: #78f0c0;
+  --resource-food: #ffd166;
+  --resource-data: #8db7ff;
+}
+
+.layout {
+  grid-template-columns: minmax(280px, 0.78fr) minmax(390px, 1.42fr) minmax(320px, 0.9fr);
+  align-items: start;
+}
+
+#archivePanel {
+  grid-column: 3;
+}
+
+#incubationPanel {
+  grid-column: 3;
+}
+
+.resource-bar span:nth-child(1) {
+  border-color: color-mix(in srgb, var(--resource-dna) 35%, transparent);
+}
+
+.resource-bar span:nth-child(2) {
+  border-color: color-mix(in srgb, var(--resource-food) 35%, transparent);
+}
+
+.resource-bar span:nth-child(3) {
+  border-color: color-mix(in srgb, var(--resource-data) 35%, transparent);
+}
+
+.resource-bar img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border-radius: 7px;
+  padding: 2px;
+  background: rgba(255,255,255,0.06);
+}
+
+.mobile-section-nav {
+  display: none;
+}
+
+.section-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(120,240,192,0.35), transparent 0.65rem),
+    rgba(255,255,255,0.08);
+  border: 1px solid rgba(120, 240, 192, 0.28);
+  box-shadow: inset 0 0 10px rgba(120, 240, 192, 0.12);
+}
+
+.egg-icon::before {
+  content: "◉";
+  color: var(--resource-dna);
+  font-size: 1rem;
+}
+
+.archive-icon::before {
+  content: "▦";
+  color: var(--resource-data);
+  font-size: 0.95rem;
+}
+
+.stat-card h3::before,
+.facility-panel .stat-card h3::before {
+  content: "";
+}
+
+.stat-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.stat-card h3::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+}
+
+.facility-panel .stat-card:nth-of-type(1) h3::before {
+  content: "▣";
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  color: var(--resource-dna);
+  background: rgba(120,240,192,0.10);
+  border: 1px solid rgba(120,240,192,0.25);
+}
+
+.facility-panel .stat-card:nth-of-type(2) h3::before {
+  content: "⌁";
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  color: var(--resource-data);
+  background: rgba(141,183,255,0.10);
+  border: 1px solid rgba(141,183,255,0.25);
+}
+
+.facility-panel .stat-card:first-of-type {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.facility-panel .stat-card:first-of-type p {
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 0.75rem;
+  margin: 0;
+}
+
+#upgradeMutation,
+#upgradeIncubation,
+#upgradeHabitat {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem 0.55rem;
+  align-items: center;
+  text-align: left;
+  padding: 0.82rem 1rem;
+}
+
+#upgradeMutation span,
+#upgradeIncubation span,
+#upgradeHabitat span {
+  font-weight: 900;
+}
+
+#upgradeMutation small,
+#upgradeIncubation small,
+#upgradeHabitat small {
+  color: rgba(6,16,24,0.72);
+  font-weight: 800;
+  grid-column: 1;
+}
+
+#upgradeMutation b,
+#upgradeIncubation b,
+#upgradeHabitat b {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  background: rgba(6,16,24,0.13);
+  border-radius: 999px;
+  padding: 0.32rem 0.55rem;
+  white-space: nowrap;
+}
+
+button.cannot-afford small {
+  color: rgba(229,231,235,0.65) !important;
+}
+
+button.cannot-afford b {
+  background: rgba(0,0,0,0.22) !important;
+}
+
+.egg-card-polished {
+  padding: 1rem;
+}
+
+.egg-layout {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.egg-art-frame {
+  min-height: 150px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 62%, rgba(0,0,0,0.45), transparent 4rem),
+    radial-gradient(circle at 50% 45%, rgba(120,240,192,0.22), transparent 3rem),
+    linear-gradient(135deg, rgba(120,240,192,0.12), rgba(141,183,255,0.10));
+  border: 1px solid rgba(120,240,192,0.18);
+}
+
+.egg-copy h3 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.parent-line {
+  margin-bottom: 0.65rem;
+}
+
+.egg-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.pip-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22px, 1fr));
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.pip {
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.pip.filled {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow: 0 0 14px rgba(120,240,192,0.26);
+}
+
+.projected-line {
+  margin-bottom: 0;
+}
+
+.empty-state {
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.archive-grouped {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.archive-group {
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 18px;
+  padding: 0.8rem;
+}
+
+.archive-group-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+}
+
+.archive-group-head h3 {
+  margin: 0;
+  font-size: 0.96rem;
+  color: var(--text);
+}
+
+.archive-group-head b {
+  margin-left: auto;
+  background: rgba(120,240,192,0.12);
+  border: 1px solid rgba(120,240,192,0.22);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 0.18rem 0.48rem;
+  font-size: 0.8rem;
+}
+
+.archive-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.archive-chip {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Mobile layout pass: focused section navigation without a full rewrite */
+@media (max-width: 900px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .mobile-section-nav {
+    position: sticky;
+    top: 0;
+    z-index: 19;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.35rem;
+    padding: 0.45rem 0.65rem;
+    background: rgba(8, 12, 20, 0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .mobile-section-nav button {
+    min-height: 44px;
+    padding: 0.5rem 0.35rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.075);
+    color: var(--text);
+    box-shadow: none;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .mobile-section-nav button.active,
+  .mobile-section-nav button:active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #061018;
+    transform: scale(0.97);
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 0.75rem;
+  }
+
+  #archivePanel,
+  #incubationPanel {
+    grid-column: auto;
+  }
+
+  .app-section {
+    scroll-margin-top: 110px;
+  }
+
+  button {
+    min-height: 48px;
+  }
+
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .section-head button {
+    width: 100%;
+  }
+
+  .resource-bar {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .resource-bar span {
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.55rem 0.45rem;
+  }
+
+  .resource-bar img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .egg-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .egg-art-frame {
+    min-height: 170px;
+  }
+
+  .egg-preview {
+    transform: scale(2.1);
+  }
+
+  .facility-panel .stat-card:first-of-type {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .facility-panel .stat-card:first-of-type h3 {
+    grid-column: 1 / -1;
+  }
+
+  .facility-panel .stat-card:first-of-type p {
+    padding: 0.7rem 0.55rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .resource-bar span {
+    font-size: 0.92rem;
+  }
+
+  .mobile-section-nav button {
+    font-size: 0.72rem;
+  }
+
+  .facility-panel .stat-card:first-of-type {
+    grid-template-columns: 1fr;
+  }
+
+  #upgradeMutation,
+  #upgradeIncubation,
+  #upgradeHabitat {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  #upgradeMutation b,
+  #upgradeIncubation b,
+  #upgradeHabitat b {
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: center;
+  }
+}

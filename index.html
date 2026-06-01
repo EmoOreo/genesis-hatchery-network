@@ -21,8 +21,15 @@
       </div>
     </header>
 
+    <nav id="mobileSectionNav" class="mobile-section-nav" aria-label="Hatchery sections">
+      <button data-section="facilityPanel">Facility</button>
+      <button data-section="specimensPanel">Specimens</button>
+      <button data-section="incubationPanel">Incubation</button>
+      <button data-section="archivePanel">Archive</button>
+    </nav>
+
     <main class="layout">
-      <section class="panel facility-panel">
+      <section id="facilityPanel" class="panel facility-panel app-section">
         <h2>Facility Log</h2>
         <div id="logBox" class="log-box"></div>
 
@@ -50,7 +57,7 @@
         </div>
       </section>
 
-      <section class="panel">
+      <section id="specimensPanel" class="panel app-section">
         <div class="section-head">
           <h2>Living Specimens</h2>
           <button id="breedButton">Breed Selected Pair</button>
@@ -59,13 +66,15 @@
         <div id="creatureList" class="card-grid"></div>
       </section>
 
-      <section class="panel">
-        <h2>Incubation Bay</h2>
+      <section id="incubationPanel" class="panel app-section">
+        <h2><span class="section-icon egg-icon"></span> Incubation Bay</h2>
         <div id="eggList" class="card-grid"></div>
+      </section>
 
-        <h2>Archive</h2>
+      <section id="archivePanel" class="panel app-section">
+        <h2><span class="section-icon archive-icon"></span> Archive</h2>
         <p class="hint">First discovery of each species, pattern, color, and anomaly is recorded.</p>
-        <div id="archiveList" class="archive-list"></div>
+        <div id="archiveList" class="archive-list archive-grouped"></div>
       </section>
     </main>
   </div>

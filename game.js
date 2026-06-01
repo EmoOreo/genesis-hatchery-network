@@ -41,6 +41,12 @@ const GENESIS_SPECIES_GIFS = {
   "Void Panther": "boss_shadowlord_breathing.gif"
 };
 
+const RESEARCH_BENEFITS = {
+  mutation: "+ mutation odds",
+  incubation: "faster hatching",
+  habitat: "+ population capacity"
+};
+
 const GENESIS_ICON_ASSETS = {
   egg: "assets/duelyst/icons/generalspell_f5_egg.png",
   mutation: "assets/duelyst/icons/artifact_f2_unboundedenergyamulet.png",
@@ -206,6 +212,10 @@ function load() {
   if (!state.tier1bVisualPolishNoted) {
     addLog("Tier 1B visual polish active: enlarged specimen cards, clearer research costs, and upgraded asset presentation.");
     state.tier1bVisualPolishNoted = true;
+  }
+  if (!state.tier1c2aNoted) {
+    addLog("Tier 1C/2A active: repaired icon layout, grouped archive, mobile section navigation, and upgraded incubation cards.");
+    state.tier1c2aNoted = true;
   }
   render();
 }
@@ -459,12 +469,27 @@ function updateResearchButtons() {
     const cost = researchCost(config.type);
     const canAfford = state.data >= cost;
 
-    button.textContent = `${config.label} — ${cost} Data`;
+    button.innerHTML = `<span>${config.label}</span><small>${RESEARCH_BENEFITS[config.type] || ""}</small><b>${cost} Data</b>`;
     button.disabled = !canAfford;
     button.title = canAfford
-      ? `Spend ${cost} Data`
-      : `Need ${cost - state.data} more Data`;
+      ? `${config.label}: ${RESEARCH_BENEFITS[config.type]}. Spend ${cost} Data.`
+      : `${config.label}: ${RESEARCH_BENEFITS[config.type]}. Need ${cost - state.data} more Data.`;
     button.classList.toggle("cannot-afford", !canAfford);
+  });
+}
+
+function initMobileSectionNav() {
+  const nav = document.getElementById("mobileSectionNav");
+  if (!nav) return;
+
+  nav.querySelectorAll("button").forEach(button => {
+    button.addEventListener("click", () => {
+      const section = document.getElementById(button.dataset.section);
+      if (!section) return;
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      nav.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+    });
   });
 }
 
@@ -556,20 +581,36 @@ function renderEggs() {
   const list = document.getElementById("eggList");
   list.innerHTML = "";
   if (!state.eggs.length) {
-    list.innerHTML = `<p class="muted">No active incubations.</p>`;
+    list.innerHTML = `<p class="muted empty-state">No active incubations. Select a compatible pair from Living Specimens to begin a new viable egg.</p>`;
     return;
   }
 
   state.eggs.forEach(e => {
     const div = document.createElement("article");
-    div.className = "egg-card";
-    const pct = Math.max(0, Math.min(100, Math.round((e.progress / e.required) * 100)));
+    div.className = "egg-card egg-card-polished";
+    const progress = Math.min(100, Math.round((e.progress / e.required) * 100));
+    const pips = Array.from({ length: e.required }, (_, i) => {
+      const filled = i < e.progress ? " filled" : "";
+      return `<span class="pip${filled}"></span>`;
+    }).join("");
+
     div.innerHTML = `
-      <h3>Viable Egg</h3>
-      <p class="muted">${e.parentA} × ${e.parentB}</p>
-      <p>Progress: <b>${e.progress}</b>/<b>${e.required}</b></p>
-      <div class="progress-shell"><div class="progress-fill" style="--progress:${pct}%"></div></div>
-      <p>Projected Line: ${e.child.species}</p>
+      <div class="egg-layout">
+        <div class="egg-art-frame">
+          <img class="egg-preview" src="${getCreatureVisual(e.child)}" alt="${e.child.species} projected specimen" />
+        </div>
+        <div class="egg-copy">
+          <h3><span class="section-icon egg-icon"></span> Viable Egg</h3>
+          <p class="muted parent-line">${e.parentA} × ${e.parentB}</p>
+          <div class="egg-progress-head">
+            <span>Progress</span>
+            <b>${e.progress}/${e.required}</b>
+          </div>
+          <div class="pip-track" aria-label="Incubation progress">${pips}</div>
+          <div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div>
+          <p class="projected-line">Projected Line: <b>${e.child.species}</b></p>
+        </div>
+      </div>
     `;
     list.appendChild(div);
   });
@@ -578,11 +619,38 @@ function renderEggs() {
 function renderArchive() {
   const list = document.getElementById("archiveList");
   list.innerHTML = "";
+
+  const groups = {};
   [...state.archive].sort().forEach(item => {
-    const chip = document.createElement("span");
-    chip.className = "archive-chip";
-    chip.textContent = item;
-    list.appendChild(chip);
+    const [kind, ...rest] = item.split(": ");
+    const value = rest.join(": ") || item;
+    if (!groups[kind]) groups[kind] = [];
+    groups[kind].push(value);
+  });
+
+  const order = ["Species", "Mutation", "Anomaly", "Pattern", "Color"];
+  const icons = {
+    Species: "🧬",
+    Mutation: "✦",
+    Anomaly: "⚠",
+    Pattern: "◈",
+    Color: "●"
+  };
+
+  order.filter(kind => groups[kind]).forEach(kind => {
+    const group = document.createElement("section");
+    group.className = `archive-group archive-${kind.toLowerCase()}`;
+    group.innerHTML = `
+      <div class="archive-group-head">
+        <span>${icons[kind] || "•"}</span>
+        <h3>${kind}</h3>
+        <b>${groups[kind].length}</b>
+      </div>
+      <div class="archive-chip-row">
+        ${groups[kind].map(value => `<span class="archive-chip">${value}</span>`).join("")}
+      </div>
+    `;
+    list.appendChild(group);
   });
 }
 
@@ -594,4 +662,5 @@ document.getElementById("upgradeMutation").addEventListener("click", () => upgra
 document.getElementById("upgradeIncubation").addEventListener("click", () => upgrade("incubation"));
 document.getElementById("upgradeHabitat").addEventListener("click", () => upgrade("habitat"));
 
+initMobileSectionNav();
 load();
