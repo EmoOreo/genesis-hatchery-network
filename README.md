@@ -81,3 +81,8 @@ This version includes a curated OpenDuelyst-derived asset pass: animated creatur
 ## Tier 1C + Tier 2A UX/Layout Patch
 
 This build includes broken-icon cleanup, grouped Archive display, improved incubation cards with projected creature previews, research benefit descriptions, and mobile section navigation. See `TIER_1C_2A_UX_LAYOUT.md`.
+
+
+## Tier 2B Gameplay Clarity
+
+Adds Node Directive progression guidance, repairs remaining section icon artifacts, improves active mobile section navigation, and prepares the game for Tier 3 genetics visualization. See `TIER_2B_GAMEPLAY_CLARITY.md`.

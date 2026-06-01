@@ -1018,3 +1018,162 @@ button.cannot-afford b {
     justify-self: center;
   }
 }
+
+
+/* Tier 2B — Gameplay Clarity + Icon Repair Pass */
+.section-icon,
+.facility-panel .stat-card:nth-of-type(1) h3::before,
+.facility-panel .stat-card:nth-of-type(2) h3::before {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(120,240,192,0.26), transparent 0.72rem),
+    rgba(120,240,192,0.09);
+  border: 1px solid rgba(120,240,192,0.32);
+  color: transparent;
+}
+
+.section-icon::before,
+.facility-panel .stat-card:nth-of-type(1) h3::before,
+.facility-panel .stat-card:nth-of-type(2) h3::before {
+  color: var(--accent);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(120,240,192,0.36);
+}
+
+.egg-icon::before { content: "◎" !important; }
+.archive-icon::before { content: "▦" !important; }
+
+.facility-panel .stat-card:nth-of-type(1) h3::before {
+  content: "⌂" !important;
+}
+
+.facility-panel .stat-card:nth-of-type(2) h3::before {
+  content: "⌁" !important;
+}
+
+/* Hide old broken inline image/icon remnants inside titles */
+.egg-copy h3 > img,
+.stat-card h3 > img,
+.panel h2 > img,
+.creature-info h3 > img {
+  display: none !important;
+}
+
+.egg-title {
+  gap: 0.45rem;
+}
+
+.egg-title::before,
+.stat-card h3::after {
+  content: none !important;
+}
+
+/* Stronger mobile active section state */
+.mobile-section-nav button.active {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,0.18), transparent 1.2rem),
+    linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #061018;
+  border-color: rgba(120,240,192,0.75);
+  box-shadow:
+    0 0 0 1px rgba(120,240,192,0.2),
+    0 8px 26px rgba(120,240,192,0.22);
+}
+
+.mobile-section-nav button.active::before {
+  content: "●";
+  font-size: 0.58rem;
+  margin-right: 0.35rem;
+}
+
+/* Node Directive */
+.directive-card {
+  border-color: rgba(120,240,192,0.18);
+  background:
+    radial-gradient(circle at 92% 10%, rgba(120,240,192,0.18), transparent 4rem),
+    linear-gradient(135deg, rgba(120,240,192,0.06), rgba(141,183,255,0.045)),
+    var(--panel2);
+}
+
+.directive-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+
+.directive-card h3::before {
+  content: "◆";
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  color: var(--accent);
+  background: rgba(120,240,192,0.1);
+  border: 1px solid rgba(120,240,192,0.28);
+}
+
+.directive-title {
+  font-weight: 900;
+  color: var(--text);
+}
+
+.directive-body {
+  color: var(--muted);
+  margin: 0.25rem 0 0.65rem;
+}
+
+.directive-progress {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+
+.directive-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.directive-reward {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 0.7rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: rgba(120,240,192,0.11);
+  border: 1px solid rgba(120,240,192,0.24);
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 0.88rem;
+}
+
+.directive-action {
+  width: 100%;
+  margin-top: 0.8rem;
+  min-height: 44px;
+}
+
+.directive-card.complete {
+  border-color: rgba(255, 209, 102, 0.28);
+}
+
+.directive-card.complete h3::before {
+  content: "✓";
+  color: var(--gold);
+  border-color: rgba(255, 209, 102, 0.32);
+  background: rgba(255, 209, 102, 0.1);
+}
+
+@media (max-width: 900px) {
+  .directive-card {
+    order: -1;
+  }
+}

@@ -217,6 +217,10 @@ function load() {
     addLog("Tier 1C/2A active: repaired icon layout, grouped archive, mobile section navigation, and upgraded incubation cards.");
     state.tier1c2aNoted = true;
   }
+  if (!state.tier2bNoted) {
+    addLog("Tier 2B active: Node Directive online, section icons repaired, and mobile navigation state tracking enabled.");
+    state.tier2bNoted = true;
+  }
   render();
 }
 
@@ -455,6 +459,98 @@ function triggerFX(type = "hatch", message = "") {
   }
 }
 
+function getDirective() {
+  const incubationCost = researchCost("incubation");
+  const mutationCost = researchCost("mutation");
+  const habitatCost = researchCost("habitat");
+
+  if (state.research.incubation < 2) {
+    return {
+      title: "Research Incubation Lv2",
+      body: "Upgrade the hatchery protocol to improve future incubation handling.",
+      current: Math.min(state.data, incubationCost),
+      target: incubationCost,
+      reward: "Reward: faster hatching path unlocked",
+      action: "upgradeIncubation",
+      complete: state.data >= incubationCost
+    };
+  }
+
+  if (state.research.mutation < 2) {
+    return {
+      title: "Research Mutation Science Lv2",
+      body: "Improve genome analysis so rare expressions are easier to stabilize.",
+      current: Math.min(state.data, mutationCost),
+      target: mutationCost,
+      reward: "Reward: improved mutation discovery odds",
+      action: "upgradeMutation",
+      complete: state.data >= mutationCost
+    };
+  }
+
+  if (state.creatures.length < populationCap()) {
+    return {
+      title: "Grow Node-7 Population",
+      body: "Breed or stabilize another viable specimen to expand the living archive.",
+      current: state.creatures.length,
+      target: populationCap(),
+      reward: "Reward: deeper archive coverage",
+      action: "specimensPanel",
+      complete: false
+    };
+  }
+
+  return {
+    title: "Upgrade Habitat Engineering",
+    body: "Increase containment capacity before Node-7 reaches population pressure.",
+    current: Math.min(state.data, habitatCost),
+    target: habitatCost,
+    reward: "Reward: + population capacity",
+    action: "upgradeHabitat",
+    complete: state.data >= habitatCost
+  };
+}
+
+function renderDirective() {
+  const card = document.getElementById("directiveCard");
+  if (!card) return;
+
+  const directive = getDirective();
+  const pct = Math.min(100, Math.round((directive.current / Math.max(1, directive.target)) * 100));
+  card.classList.toggle("complete", directive.complete);
+
+  const buttonLabel = directive.action.startsWith("upgrade")
+    ? "Go to Research"
+    : "Go to Specimens";
+
+  card.innerHTML = `
+    <h3>Node Directive</h3>
+    <div class="directive-title">${directive.title}</div>
+    <p class="directive-body">${directive.body}</p>
+    <div class="directive-progress">
+      <div class="directive-progress-head">
+        <span>Progress</span>
+        <b>${directive.current}/${directive.target}</b>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="directive-reward">${directive.reward}</div>
+    <button class="directive-action small-button" onclick="focusDirectiveTarget('${directive.action}')">${buttonLabel}</button>
+  `;
+}
+
+function focusDirectiveTarget(action) {
+  if (action.startsWith("upgrade")) {
+    const target = document.getElementById(action) || document.querySelector(".facility-panel .stat-card:nth-of-type(3)");
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+    triggerFX("research", "Research objective selected");
+    return;
+  }
+
+  const target = document.getElementById(action);
+  if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function updateResearchButtons() {
   const buttonConfig = [
     { id: "upgradeMutation", type: "mutation", label: "Upgrade Mutation Science" },
@@ -491,6 +587,27 @@ function initMobileSectionNav() {
       button.classList.add("active");
     });
   });
+
+  window.addEventListener("scroll", updateActiveMobileSection, { passive: true });
+  updateActiveMobileSection();
+}
+
+function updateActiveMobileSection() {
+  const nav = document.getElementById("mobileSectionNav");
+  if (!nav) return;
+
+  const sections = [...document.querySelectorAll(".app-section")];
+  let active = sections[0]?.id;
+  const offset = 150;
+
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top - offset <= 0) active = section.id;
+  });
+
+  nav.querySelectorAll("button").forEach(button => {
+    button.classList.toggle("active", button.dataset.section === active);
+  });
 }
 
 function render() {
@@ -505,6 +622,7 @@ function render() {
   document.getElementById("incubationLevel").textContent = state.research.incubation;
   document.getElementById("habitatResearchLevel").textContent = state.research.habitat;
   updateResearchButtons();
+  renderDirective();
 
   renderLog();
   renderCreatures();
@@ -600,7 +718,7 @@ function renderEggs() {
           <img class="egg-preview" src="${getCreatureVisual(e.child)}" alt="${e.child.species} projected specimen" />
         </div>
         <div class="egg-copy">
-          <h3><span class="section-icon egg-icon"></span> Viable Egg</h3>
+          <h3 class="egg-title"><span class="section-icon egg-icon" aria-hidden="true"></span> Viable Egg</h3>
           <p class="muted parent-line">${e.parentA} × ${e.parentB}</p>
           <div class="egg-progress-head">
             <span>Progress</span>
